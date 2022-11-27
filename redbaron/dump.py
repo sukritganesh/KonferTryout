@@ -147,7 +147,7 @@ class KnnModelTrain:
         akmdf = akmdf.sort_values(by=['REPORT_DATE']).reset_index(drop=True)
         return akmdf
 
-    def isEnoughData(self,df,columns):
+    def isEnoughData(self,hey,columns):
         '''
         Args:
             df -> input dataframe
@@ -155,6 +155,7 @@ class KnnModelTrain:
         Returns:
             It return True/False based on distinct value count of the target feature
         '''
+        print('hello there')
         print('your move')
         for col in columns:
             distcnt = np.count_nonzero(df[col], axis=0)
