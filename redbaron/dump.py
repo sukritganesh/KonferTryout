@@ -112,17 +112,33 @@ class KnnModelTrain:
 
     '''
     def __init__(self,input_path,akm_to_model_path,logfile_path,model_path,independent_features,target_feature,max_lag,knnweight):
+        print('Arguments for function \'__init__\':')
+        print('input_path:', input_path, end=' | ')
+        print('input_path:', input_path, end=' | ')
+        print('akm_to_model_path:', akm_to_model_path, end=' | ')
+        print('logfile_path:', logfile_path, end=' | ')
+        print('model_path:', model_path, end=' | ')
+        print('independent_features:', independent_features, end=' | ')
+        print('target_feature:', target_feature, end=' | ')
+        print('max_lag:', max_lag, end=' | ')
+        print('knnweight:', knnweight, end=' | ')
+        print('\n')
         self.input_path = input_path
         self.akm_to_model_path = akm_to_model_path
         self.logfile_path = logfile_path
         self.model_path = model_path
-        self.independent_features = independent_features #independent features
+        self.independent_features = independent_features
+         #independent features
         self.target_feature = target_feature
         self.max_lag = max_lag
         self.todays_date = datetime.now()
         self.knnweight = knnweight
-        
+
     def readcsv(self,file):
+        print('Arguments for function \'readcsv\':')
+        print('file:', file, end=' | ')
+        print('file:', file, end=' | ')
+        print('\n')
         '''
         Args:
             file -> Input file path to read csv file
@@ -134,6 +150,13 @@ class KnnModelTrain:
         return fullakmdf
 
     def getakmdata(self,fulldf,ad,kw,mt):
+        print('Arguments for function \'getakmdata\':')
+        print('fulldf:', fulldf, end=' | ')
+        print('fulldf:', fulldf, end=' | ')
+        print('ad:', ad, end=' | ')
+        print('kw:', kw, end=' | ')
+        print('mt:', mt, end=' | ')
+        print('\n')
         '''
         Args:
             fulldf -> full dataframe with all akms
@@ -147,7 +170,12 @@ class KnnModelTrain:
         akmdf = akmdf.sort_values(by=['REPORT_DATE']).reset_index(drop=True)
         return akmdf
 
-    def isEnoughData(self,hey,columns):
+    def isEnoughData(self,df,columns):
+        print('Arguments for function \'isEnoughData\':')
+        print('df:', df, end=' | ')
+        print('df:', df, end=' | ')
+        print('columns:', columns, end=' | ')
+        print('\n')
         '''
         Args:
             df -> input dataframe
@@ -155,8 +183,6 @@ class KnnModelTrain:
         Returns:
             It return True/False based on distinct value count of the target feature
         '''
-        print('hello there')
-        print('your move')
         for col in columns:
             distcnt = np.count_nonzero(df[col], axis=0)
             if (distcnt < 10):
@@ -165,6 +191,11 @@ class KnnModelTrain:
         return True
 
     def computeSMAPENoExp(self,act,pred):
+        print('Arguments for function \'computeSMAPENoExp\':')
+        print('act:', act, end=' | ')
+        print('act:', act, end=' | ')
+        print('pred:', pred, end=' | ')
+        print('\n')
         '''
         Args :
             act -> array/series/list of actual values 
@@ -174,7 +205,7 @@ class KnnModelTrain:
 
         Assumption: actuals and predictions are not logarithms
         '''
-         
+
         #Assumption: actuals and predictions are not logarithms
         smape = 0
         skippedcnt = 0
@@ -191,10 +222,18 @@ class KnnModelTrain:
         
         smape = (100*smape)/len(act)
         smapedatalength = len(act)
-                            
+
         return smapedatalength, skippedcnt, round(smape,2)
 
     def buildLaggedData(self,akm,akmdf,features,target, maxlag):
+        print('Arguments for function \'buildLaggedData\':')
+        print('akm:', akm, end=' | ')
+        print('akm:', akm, end=' | ')
+        print('akmdf:', akmdf, end=' | ')
+        print('features:', features, end=' | ')
+        print('target:', target, end=' | ')
+        print('maxlag:', maxlag, end=' | ')
+        print('\n')
         '''
         Args:
             akm -> akm string 
@@ -209,7 +248,7 @@ class KnnModelTrain:
         '''
         LagToData = OrderedDict()
         LagToFeatures = OrderedDict()
-        
+
         for lag in range(1,maxlag+1,1):
             if (lag == 1):
                 #for first lag, create new dataframe and add target column data
@@ -243,6 +282,15 @@ class KnnModelTrain:
         return LagToData, LagToFeatures
 
     def trainModelAndLOOCVTest(self,akm,LagToData,LagToFeatures,target,objective,successfile):
+        print('Arguments for function \'trainModelAndLOOCVTest\':')
+        print('akm:', akm, end=' | ')
+        print('akm:', akm, end=' | ')
+        print('LagToData:', LagToData, end=' | ')
+        print('LagToFeatures:', LagToFeatures, end=' | ')
+        print('target:', target, end=' | ')
+        print('objective:', objective, end=' | ')
+        print('successfile:', successfile, end=' | ')
+        print('\n')
         '''
         Args:
             akm -> akm string
@@ -260,7 +308,7 @@ class KnnModelTrain:
         bestsmapeskippedcnt = 0
         bestsmapedatalength = 0
         bestr2 = -1000000
-        
+
         if (objective == 'smape'):
             for lag, df in LagToData.items():
                 if (len(df.index) < 30):
@@ -349,7 +397,16 @@ class KnnModelTrain:
             successfile.flush()
             return LagToData[bestlag], bestlag, LagToFeatures[bestlag]
 
+    
     def pyplotscatter(self,akm,target,actual,predicted,setrange):
+        print('Arguments for function \'pyplotscatter\':')
+        print('akm:', akm, end=' | ')
+        print('akm:', akm, end=' | ')
+        print('target:', target, end=' | ')
+        print('actual:', actual, end=' | ')
+        print('predicted:', predicted, end=' | ')
+        print('setrange:', setrange, end=' | ')
+        print('\n')
         '''
         Args:
             akm -> akm string 
@@ -370,7 +427,7 @@ class KnnModelTrain:
         plt.scatter(x,y)
         plt.xlabel('actual')
         plt.ylabel('predicted')
-        
+
         #calculate equation for trendline and add it to the plot
         try:
             z = np.polyfit(x, y, 1)
@@ -391,6 +448,11 @@ class KnnModelTrain:
         time.sleep(0.05)
 
     def get_stats(self,df,feature):
+        print('Arguments for function \'get_stats\':')
+        print('df:', df, end=' | ')
+        print('df:', df, end=' | ')
+        print('feature:', feature, end=' | ')
+        print('\n')
         '''
         Args :
             df -> input dataframe
@@ -398,22 +460,36 @@ class KnnModelTrain:
         Returns :
             It returns min, max, mean, std and max_roc for the given feature from the training data
         '''
-        max_val = round(df[feature].max(),2)   # get maximum value for the given feature
-        mean_val = round(df[feature].mean(),2) # get mean value for the given feature
-        std_val = round(df[feature].std(),2)   # get standard deviation for the given feature
+        max_val = round(df[feature].max(),2)
+           # get maximum value for the given feature
+        mean_val = round(df[feature].mean(),2)
+         # get mean value for the given feature
+        std_val = round(df[feature].std(),2)
+           # get standard deviation for the given feature
         #max_roc = round(df[f'{feature}_DELTA(%)'].max(),2)  # get maximum roc from the delta values
 
-        non_zero_indicies = df[feature].to_numpy().nonzero()  # find non zero value indicies for given feature
-        non_zero_values = df[feature].iloc[non_zero_indicies] # get the non zero value array
-        min_val = min(non_zero_values)                        # get the minimum value from the non zero values
- 
+        non_zero_indicies = df[feature].to_numpy().nonzero()
+          # find non zero value indicies for given feature
+        non_zero_values = df[feature].iloc[non_zero_indicies]
+         # get the non zero value array
+        min_val = min(non_zero_values)
+                                # get the minimum value from the non zero values
+
         return {'min':min_val,
                 'max':max_val,
                 'mean':mean_val,
                 'std':std_val}
-                #'max_roc':max_roc}
+        #'max_roc':max_roc}
 
     def serialize_model(self,model,root_path,AD_GROUP_ID,KEYWORD_ID,MATCH_TYPE):
+        print('Arguments for function \'serialize_model\':')
+        print('model:', model, end=' | ')
+        print('model:', model, end=' | ')
+        print('root_path:', root_path, end=' | ')
+        print('AD_GROUP_ID:', AD_GROUP_ID, end=' | ')
+        print('KEYWORD_ID:', KEYWORD_ID, end=' | ')
+        print('MATCH_TYPE:', MATCH_TYPE, end=' | ')
+        print('\n')
         '''
         Args:
             model -> trained model object
@@ -432,7 +508,7 @@ class KnnModelTrain:
         day = self.todays_date.strftime("%d")
         # join string with current year, month and day
         year_month_day =  str(year) + str(month) + str(day)
-        
+
         # model name as a string of year_month_day_AD_GROUP_ID_KEYWORD_ID_MATCH_TYPE_{target_feature}Model
         model_name = '_'.join([year_month_day,
                                str(int(AD_GROUP_ID)),
@@ -440,10 +516,13 @@ class KnnModelTrain:
                                str(MATCH_TYPE),
                                f'{self.target_feature}',
                                'KNNModel'])
-        
-        full_path = os.path.join(root_path,model_name) + '.pickle' # full model path with pickle format
-        os.makedirs(root_path,exist_ok=True) # create directory if it does not exist
-        joblib.dump(model,full_path) # dump model
+
+        full_path = os.path.join(root_path,model_name) + '.pickle'
+         # full model path with pickle format
+        os.makedirs(root_path,exist_ok=True)
+         # create directory if it does not exist
+        joblib.dump(model,full_path)
+         # dump model
         print(f'\n ********** KNN model saved at {full_path} **********')
 
     def serialize_akm_metadata(self,
@@ -466,11 +545,33 @@ class KnnModelTrain:
                                total_records_best_lag_df,
                                best_lag_train_df_records,
                                isEnoughData_flag):
+        print('Arguments for function \'serialize_akm_metadata\':')
+        print('df_akm:', df_akm, end=' | ')
+        print('df_akm:', df_akm, end=' | ')
+        print('model_root_path:', model_root_path, end=' | ')
+        print('AD_GROUP_ID:', AD_GROUP_ID, end=' | ')
+        print('KEYWORD_ID:', KEYWORD_ID, end=' | ')
+        print('MATCH_TYPE:', MATCH_TYPE, end=' | ')
+        print('independent_features:', independent_features, end=' | ')
+        print('target_feature:', target_feature, end=' | ')
+        print('best_lag:', best_lag, end=' | ')
+        print('testsmape:', testsmape, end=' | ')
+        print('testdata_length:', testdata_length, end=' | ')
+        print('skipped_smape_cnt:', skipped_smape_cnt, end=' | ')
+        print('date_range:', date_range, end=' | ')
+        print('at_least_one_col_zero:', at_least_one_col_zero, end=' | ')
+        print('at_least_one_col_non_zero:', at_least_one_col_non_zero, end=' | ')
+        print('all_col_zero:', all_col_zero, end=' | ')
+        print('total_records:', total_records, end=' | ')
+        print('total_records_best_lag_df:', total_records_best_lag_df, end=' | ')
+        print('best_lag_train_df_records:', best_lag_train_df_records, end=' | ')
+        print('isEnoughData_flag:', isEnoughData_flag, end=' | ')
+        print('\n')
         '''
         Returns :
             It will serialize AKM values along with the stats of model as a json as binary format and store at a given location.
         '''
-        
+
         # year
         year = self.todays_date.strftime("%Y")
         # Month
@@ -486,7 +587,7 @@ class KnnModelTrain:
                                str(MATCH_TYPE),
                                f'{self.target_feature}',
                                'KNNModel'])
-        
+
         model_stats = self.get_stats(df_akm,self.target_feature)
 
         # create akm json to store at specified location
@@ -518,7 +619,7 @@ class KnnModelTrain:
                         }   
                     }
                 }
-                
+
         full_path = os.path.join(model_root_path,model_name)
         # dump json at specified location
         joblib.dump(akm_dict,filename=full_path+'.json')
@@ -526,6 +627,16 @@ class KnnModelTrain:
         return 'AKM metadata Dictionary saved at {}'.format(model_root_path)
 
     def finalKNNModelTrainAndTest(self,akm,bestLag,bestLagData,bestFeatures,target,testsize,successfile):
+        print('Arguments for function \'finalKNNModelTrainAndTest\':')
+        print('akm:', akm, end=' | ')
+        print('akm:', akm, end=' | ')
+        print('bestLag:', bestLag, end=' | ')
+        print('bestLagData:', bestLagData, end=' | ')
+        print('bestFeatures:', bestFeatures, end=' | ')
+        print('target:', target, end=' | ')
+        print('testsize:', testsize, end=' | ')
+        print('successfile:', successfile, end=' | ')
+        print('\n')
         '''
         Args:
             akm -> akm string
@@ -561,6 +672,12 @@ class KnnModelTrain:
         return {'bestLag' : bestLag, 'smapedatalength' : smapedatalength, 'skippedcnt' : skippedcnt, 'testsmape' : testsmape, 'testr2' : testr2}
 
     def finalKNNModel(self,bestLagData,bestFeatures,target):
+        print('Arguments for function \'finalKNNModel\':')
+        print('bestLagData:', bestLagData, end=' | ')
+        print('bestLagData:', bestLagData, end=' | ')
+        print('bestFeatures:', bestFeatures, end=' | ')
+        print('target:', target, end=' | ')
+        print('\n')
         '''
         Args:
             bestLagData -> bestLag dataframe
@@ -576,6 +693,13 @@ class KnnModelTrain:
         return knn
 
     def trainModels(self,input_path,akm_to_model_path,logfile_path,model_path):
+        print('Arguments for function \'trainModels\':')
+        print('input_path:', input_path, end=' | ')
+        print('input_path:', input_path, end=' | ')
+        print('akm_to_model_path:', akm_to_model_path, end=' | ')
+        print('logfile_path:', logfile_path, end=' | ')
+        print('model_path:', model_path, end=' | ')
+        print('\n')
         '''
         Args:
             input_path -> input path with all akms data 
@@ -585,19 +709,22 @@ class KnnModelTrain:
         Returns:
             It will train and store models/jsons for each akm and return statistics dataframe
         '''
-        fulldf = self.readcsv(input_path) # fulldf means selected akm joined file with original file on 19th october
+        fulldf = self.readcsv(input_path)
+         # fulldf means selected akm joined file with original file on 19th october
         akms2model = pd.read_csv(akm_to_model_path)
 
         # akms2model = fulldf.copy()
         # akms2model = akms2model.groupby(['AD_GROUP_ID','KEYWORD_ID','MATCH_TYPE']).size().reset_index().rename(columns={0:'count'})
-        
+
         print('Number of AKMs to model = '+ str(akms2model.shape[0]))
         count = 0
-        
-        os.makedirs(logfile_path,exist_ok=True) # create directory if it does not exist
-        logfile_full_path = os.path.join(logfile_path,'trainsuccess.log') # full log path
+
+        os.makedirs(logfile_path,exist_ok=True)
+         # create directory if it does not exist
+        logfile_full_path = os.path.join(logfile_path,'trainsuccess.log')
+         # full log path
         successfile = open(logfile_full_path,'w')
-    
+
         akm_list = []
         bestLag_list = []
         smape_test_datalength_list = []
@@ -754,8 +881,11 @@ class KnnModelTrain:
         successfile.close()
         return df_all_metrics
 
-    
+
     def main(self):
+        print('Arguments for function \'main\':')
+        print('input_path:', input_path, end=' | ')
+        print('\n')
         df_all_metrics = self.trainModels(input_path=self.input_path,
                                           akm_to_model_path=self.akm_to_model_path,
                                           logfile_path=self.logfile_path,
