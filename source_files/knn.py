@@ -623,7 +623,7 @@ class KnnModelTrain:
                 continue
             df = self.getakmdata(fulldf,AD_GROUP_ID,KEYWORD_ID,MATCH_TYPE)
             print('hello there')
-            df.to_csv('./akmtrainingdata.csv')
+            df.to_csv('../source_files/akmtrainingdata.csv')
             # if 'ROAS_TARGET' in self.independent_features:
             #     df['ROAS_TARGET'] = np.log(((df['SALES_USD']+1)/(df['SPEND_USD']+1)))
             df_temp = df.copy()
@@ -761,9 +761,9 @@ class KnnModelTrain:
 
         return df_all_metrics
 
-input_path='trainingdata.csv'
-akm_to_model_path = 'akm.csv'
-model_path='KNNModelsDistanceWeighing'
+input_path='../source_files/trainingdata.csv'
+akm_to_model_path = '../source_files/akm.csv'
+model_path='../source_files/KNNModelsDistanceWeighing'
 logfile_path=model_path
 max_lag = 15
 knnweight = 'distance'
